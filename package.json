@@ -1,5 +1,5 @@
 {
-  "name": "2fa",
+  "name": "2factor-auth",
   "version": "0.2.0",
   "description": "TOTP + HOTP library, aimed for communication between servers handing 2FA",
   "main": "lib/2FA.js",
@@ -13,10 +13,13 @@
   "keywords": [
     "auth",
     "two-factor",
-    "2fa"
+    "2fa",
+    "TOTP",
+    "HOTP",
+    "Token"
   ],
-  "author": "Joao Leonardo Pereira",
-  "license": "MIT",
+  "author": "Saber Tecnologias Educacionais e Sociais - Leonardo Pereira <jlcvp@cin.ufpe.br> (www.sabertecnologias.com.br)",
+  "license": "LGPL-3.0",
   "dependencies": {
     "thirty-two": "0.0.2"
   }

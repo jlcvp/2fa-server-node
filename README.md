@@ -1,20 +1,20 @@
 # 2FA
 
-[![NPM](https://nodei.co/npm/2fa.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/2fa)
+[![NPM](https://nodei.co/npm/2factor-auth.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/2factor-auth)
 
 Module for generating and verifying 2FA codes (specifically TOTP and HOTP).
 
-Also contains utilities for handing 2FA logic, such as generating Google Authenticator compatible QR codes (without going via Google Charts) and generating backup codes.
+Also contains utilities for handing 2FA logic, such as generating backup codes.
 
 ## Install
 ```
-npm install --save 2fa
+npm install --save 2factor-auth
 ```
 
 ## Usage
 
 ```js
-var tfa = require('2fa');
+var tfa = require('2factor-auth');
 
 // lets generate a new key for a user
 // tfa.generateKey(length (optional), cb)
@@ -27,13 +27,7 @@ tfa.generateKey(32, function(err, key) {
     // [ '7818-b7b8-c928', '3526-dc04-d3f2', 'be3c-5d9f-cb68', ... ]
 
     // these should be sent to the user, stored and checked when we get a 2fa code
-  });
-
-  // generate a google QR code so the user can save their new key
-  // tfa.generateGoogleQR(name, accountname, secretkey, cb)
-  tfa.generateGoogleQR('Company', 'email@gmail.com', key, function(err, qr) {
-    // data URL png image for google authenticator
-  });
+  });  
 
   var opts = {
     // the number of counters to check before what we're given
