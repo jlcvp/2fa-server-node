@@ -1,10 +1,10 @@
-# 2FA
+# 2factor-auth
 
-[![NPM](https://nodei.co/npm/2factor-auth.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/2factor-auth)
+[![NPM](https://nodei.co/npm/2factor-auth.png?compact=true)](https://nodei.co/npm/2factor-auth/)
 
 Module for generating and verifying 2FA codes (specifically TOTP and HOTP).
 
-Also contains utilities for handing 2FA logic, such as generating backup codes.
+Also contains utilities for handling common 2FA business logic, such as generating backup codes and otpauth urls.
 
 ## Install
 ```
@@ -12,52 +12,100 @@ npm install --save 2factor-auth
 ```
 
 ## Usage
+### with async/await (or promises)
+```javascript
+const tfa = require('2factor-auth');
 
-```js
-var tfa = require('2factor-auth');
+function registerUserTwoFactor() {
+  // Name of your service (will appear on top of the authenticator app)
+  const serviceName = 'Cool service that is 2FA protected';
 
-// lets generate a new key for a user
-// tfa.generateKey(length (optional), cb)
-tfa.generateKey(32, function(err, key) {
-  // crypto secure hex key with 32 characters
+  // Account name of the user (will also appear in the authenticator app)
+  const account = 'myUsername@email.com';
 
-  // generate crypto-secure backups codes in a user-friendly pattern
-  // tfa.generateBackupCodes(num, pattern (optional), cb)
-  tfa.generateBackupCodes(8, 'xxxx-xxxx-xxxx', function(err, codes) {
-    // [ '7818-b7b8-c928', '3526-dc04-d3f2', 'be3c-5d9f-cb68', ... ]
+  // generate crypto-secure hex key with 32 characters
+  const key = await tfa.generateKeyPromise(32);
 
-    // these should be sent to the user, stored and checked when we get a 2fa code
-  });  
+  // generate 8 crypto-secure backups codes with in a user-friendly pattern (xxxx-xxxx)
+  // [ '7818-b7b8', '3526-d3f2', 'be3c-5d9f', ... ]
+  const codes = await tfa.generateBackupCodesPromise(8);
 
-  var opts = {
-    // the number of counters to check before what we're given
-    // default: 0
+  // generate a URL for the user to open in their 2FA app
+  const url = tfa.generateURL(serviceName, account, key);
+  // otpauth://totp/...
+  
+  // send this URL to the user, generate a QR code, etc.
+
+  /** SAVE THE CODES AND KEY IN YOUR BACKEND/DB associated to the user **/
+}
+
+function verifyTwoFactorCode(secret_key, receivedCode) {
+
+  // verify the received code without drift
+  const valid = tfa.verifyTOTP(secret_key, receivedCode);
+  
+  // verify the received code with drift (allows for some time difference between the server and the client)
+  const validWithDrift = tfa.verifyTOTP(secret_key, receivedCode, {
     beforeDrift: 2,
-    // and the number to check after
-    // default: 0
-    afterDrift: 2,
-    // if before and after drift aren't specified,
-    // before + after drift are set to drift / 2
-    // default: 0
-    drift: 4,
-    // the step for the TOTP counter in seconds
-    // default: 30
-    step: 30
-  };
+    afterDrift: 2
+  });
 
-  // calculate the counter for the HOTP (pretending it's actually TOTP)
-  var counter = Math.floor(Date.now() / 1000 / opts.step);
+  return valid;
+}
 
-  // generate a valid code (in real-life this will be user-input)
-  var code = tfa.generateCode(key, counter);
+```
 
-  // verify it as a HOTP
-  var validHOTP = tfa.verifyHOTP(key, code, counter, opts);
-  // true
 
-  // for TOTP, the counter is calculated internally using Date.now();
-  var validTOTP = tfa.verifyTOTP(key, code, opts);
-  // true
 
-});
+### with Callbacks
+```javascript
+const tfa = require('2factor-auth');
+
+function registerUserTwoFactor(callback) {
+  // Name of your service (will appear on top of the authenticator app)
+  const serviceName = 'Cool service that is 2FA protected';
+
+  // Account name of the user (will also appear in the authenticator app)
+  const account = 'myUsername@email.com';
+
+  // generate crypto-secure hex key with 32 characters
+  tfa.generateKey(32, (err, key) => {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    // generate 8 crypto-secure backups codes with in a user-friendly pattern (xxxx-xxxx)
+    // [ '7818-b7b8', '3526-d3f2', 'be3c-5d9f', ... ]
+    tfa.generateBackupCodes(8, (err, codes) => {
+      if (err) {
+        callback(err);
+        return;
+      }
+
+      // generate a URL for the user to open in their 2FA app
+      const url = tfa.generateURL(serviceName, account, key);
+      // otpauth://totp/...
+      
+      // send this URL to the user, generate a QR code, etc.
+
+      /** SAVE THE CODES AND KEY IN YOUR BACKEND/DB associated to the user **/
+      callback(null);
+    });
+  });
+}
+
+function verifyTwoFactorCode(secret_key, receivedCode) {
+  // verify the received code without drift
+  const valid = tfa.verifyTOTP(secret_key, receivedCode);
+  
+  // verify the received code with drift (allows for some time difference between the server and the client)
+  const validWithDrift = tfa.verifyTOTP(secret_key, receivedCode, {
+    beforeDrift: 2,
+    afterDrift: 2
+  });
+
+
+  return valid;
+}
 ```

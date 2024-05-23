@@ -1,6 +1,6 @@
 {
   "name": "2factor-auth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TOTP + HOTP library, aimed for communication between servers handing 2FA",
   "main": "lib/2FA.js",
   "repository": {
