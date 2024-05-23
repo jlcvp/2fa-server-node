@@ -1,11 +1,11 @@
 {
   "name": "2factor-auth",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "TOTP + HOTP library, aimed for communication between servers handing 2FA",
   "main": "lib/2FA.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/simontabor/Saber-Tecnologias/2fa-server-node.git"
+    "url": "git@github.com:jlcvp/2fa-server-node.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,9 +18,9 @@
     "HOTP",
     "Token"
   ],
-  "author": "Saber Tecnologias Educacionais e Sociais - Leonardo Pereira <jlcvp@cin.ufpe.br> (www.sabertecnologias.com.br)",
-  "license": "LGPL-3.0",
+  "author": "Leonardo \"Leu\" Pereira",
+  "license": "MIT",
   "dependencies": {
-    "thirty-two": "0.0.2"
+    "thirty-two": "^1.0.2"
   }
 }
